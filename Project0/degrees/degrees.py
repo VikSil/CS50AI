@@ -91,9 +91,52 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
+    final_node = bfs(source, target)
+    if final_node is not None:
+        return resolve_path(final_node)
+    else:
+        return final_node
 
-    # TODO
-    raise NotImplementedError
+
+def resolve_path(node):
+    """
+    Parses the node.parent variable to the bottom
+    Returns a list of (action, state) tuples
+    in reverse order
+    """
+    path = []
+    while node.action is not None:
+        path.append((node.action, node.state))
+        node = node.parent
+    path.reverse()
+    return path
+
+
+def bfs(source, target):
+    """
+    Implements the breath-first search algorythm
+    Returns the final node or None, if target cannot be reached
+    """
+    frontier = QueueFrontier()
+    explored_set = QueueFrontier()
+    start_node = Node(state=source, parent=None, action=None)
+    frontier.add(start_node)
+
+    while not frontier.empty():
+        explored_node = frontier.remove()
+        explored_set.add(explored_node)
+
+        actor = explored_node.state
+        costars = neighbors_for_person(actor)
+        for costar in costars:
+            if costar[1] == target:
+                final_node = Node(costar[1], explored_node, costar[0])
+                return final_node
+            elif not explored_set.contains_state(costar[1]):
+                next_node = Node(costar[1], explored_node, costar[0])
+                frontier.add(next_node)
+
+    return None
 
 
 def person_id_for_name(name):
