@@ -91,6 +91,8 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
+    if source == target:
+        return list()
     final_node = bfs(source, target)
     if final_node is not None:
         return resolve_path(final_node)
