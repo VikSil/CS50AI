@@ -40,10 +40,7 @@ def crawl(directory):
 
     # Only include links to other pages in the corpus
     for filename in pages:
-        pages[filename] = set(
-            link for link in pages[filename]
-            if link in pages
-        )
+        pages[filename] = set(link for link in pages[filename] if link in pages)
 
     return pages
 
@@ -57,7 +54,26 @@ def transition_model(corpus, page, damping_factor):
     linked to by `page`. With probability `1 - damping_factor`, choose
     a link at random chosen from all pages in the corpus.
     """
-    raise NotImplementedError
+
+    N = len(corpus)
+    distribution = dict.fromkeys(corpus)
+
+    if len(corpus[page]) == 0:
+        p = round(1 / len(corpus), 6)
+        distribution = dict.fromkeys(distribution, p)
+
+    else:
+        p_random = (1 / N) * (1 - damping_factor)
+        n_of_links = len(corpus[page])
+        p_link = (1 / n_of_links) * damping_factor
+
+        for key in distribution.keys():
+            if key in corpus[page]:
+                distribution[key] = round(p_link + p_random, 6)
+            else:
+                distribution[key] = round(p_random, 6)
+
+    return distribution
 
 
 def sample_pagerank(corpus, damping_factor, n):
@@ -69,7 +85,20 @@ def sample_pagerank(corpus, damping_factor, n):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+
+    pages = list(corpus.keys())
+    page = random.choice(pages)
+    distribution = dict.fromkeys(pages, 0)
+
+    for _ in range(n):
+        distribution[page] += 1
+        sample = transition_model(corpus, page, damping_factor)
+        page = random.choices(list(sample.keys()), list(sample.values()), k=1)[0]
+
+    for key, value in distribution.items():
+        distribution[key] = round(value / n, 6)
+
+    return distribution
 
 
 def iterate_pagerank(corpus, damping_factor):
@@ -81,7 +110,50 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+
+    pages = list(corpus.keys())
+    N = len(pages)
+    distribution = dict.fromkeys(pages, 1 / N)
+
+    converge = False
+
+    while not converge:
+        new_distribution = dict.fromkeys(pages, 0)
+
+        for page in pages:
+            p_random = round((1 - damping_factor) / N, 6)
+
+            # find all pages that link to page
+            pages_i = []
+            for page_i in corpus:
+                if page in corpus[page_i] or len(corpus[page_i]) == 0:
+                    pages_i.append(page_i)
+
+            # calculate p-values
+            sum = 0
+            for page_i in pages_i:
+
+                # if a page has no links, pretend it links to all pages
+                n_i = len(corpus[page_i])
+                if n_i == 0:
+                    n_i = len(corpus)
+
+                sum += distribution[page_i] / n_i
+
+            p_linked = damping_factor * sum
+
+            new_distribution[page] = p_random + p_linked
+
+        # check if distribution has converged
+        converge = True
+        for page in pages:
+            if abs(distribution[page] - new_distribution[page]) > 0.001:
+                converge = False
+                break
+
+        distribution = new_distribution
+
+    return distribution
 
 
 if __name__ == "__main__":
