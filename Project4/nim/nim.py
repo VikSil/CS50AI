@@ -1,9 +1,8 @@
-import math
 import random
 import time
 
 
-class Nim():
+class Nim:
 
     def __init__(self, initial=[1, 3, 5, 7]):
         """
@@ -70,7 +69,7 @@ class Nim():
             self.winner = self.player
 
 
-class NimAI():
+class NimAI:
 
     def __init__(self, alpha=0.5, epsilon=0.1):
         """
@@ -101,7 +100,13 @@ class NimAI():
         Return the Q-value for the state `state` and the action `action`.
         If no Q-value exists yet in `self.q`, return 0.
         """
-        raise NotImplementedError
+
+        try:
+            q_value = self.q[tuple(state), (action)]
+        except KeyError:
+            q_value = 0
+
+        return q_value
 
     def update_q_value(self, state, action, old_q, reward, future_rewards):
         """
@@ -118,7 +123,10 @@ class NimAI():
         `alpha` is the learning rate, and `new value estimate`
         is the sum of the current reward and estimated future rewards.
         """
-        raise NotImplementedError
+
+        self.q[tuple(state), (action)] = old_q + self.alpha * (
+            reward + future_rewards - old_q
+        )
 
     def best_future_reward(self, state):
         """
@@ -130,7 +138,20 @@ class NimAI():
         Q-value in `self.q`. If there are no available actions in
         `state`, return 0.
         """
-        raise NotImplementedError
+
+        nim = Nim()
+        all_actions = nim.available_actions(state)
+
+        max_q = 0
+        for action in all_actions:
+            try:
+                q = self.q[tuple(state), action]
+            except KeyError:
+                q = 0
+
+            max_q = max(max_q, q)
+
+        return max_q
 
     def choose_action(self, state, epsilon=True):
         """
@@ -147,12 +168,33 @@ class NimAI():
         If multiple actions have the same Q-value, any of those
         options is an acceptable return value.
         """
-        raise NotImplementedError
+
+        nim = Nim()
+        all_actions = nim.available_actions(state)
+        best_action = None
+        max_q = 0
+
+        for action in all_actions:
+            try:
+                q = self.q[tuple(state), action]
+            except KeyError:
+                q = 0
+
+            if best_action is None or max_q < q:
+                best_action = action
+                max_q = q
+
+        if epsilon:
+            # epsilon-greedy algorythm
+            if random.random() < self.epsilon:
+                best_action = random.choice(list(all_actions))
+
+        return best_action
 
 
 def train(n):
     """
-    Train an AI by playing `n` games against itself.
+    Train an AI by playing `n` games against itself.df['probability']
     """
 
     player = NimAI()
@@ -163,10 +205,7 @@ def train(n):
         game = Nim()
 
         # Keep track of last move made by either player
-        last = {
-            0: {"state": None, "action": None},
-            1: {"state": None, "action": None}
-        }
+        last = {0: {"state": None, "action": None}, 1: {"state": None, "action": None}}
 
         # Game loop
         while True:
@@ -190,7 +229,7 @@ def train(n):
                     last[game.player]["state"],
                     last[game.player]["action"],
                     new_state,
-                    1
+                    1,
                 )
                 break
 
@@ -200,7 +239,7 @@ def train(n):
                     last[game.player]["state"],
                     last[game.player]["action"],
                     new_state,
-                    0
+                    0,
                 )
 
     print("Done training")
