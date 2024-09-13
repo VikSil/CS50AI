@@ -1,9 +1,7 @@
-import csv
 import pandas as pd
 import sys
 
 from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 
 TEST_SIZE = 0.4
