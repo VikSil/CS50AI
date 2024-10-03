@@ -45,9 +45,14 @@ def get_mask_token_index(mask_token_id, inputs):
     Return the index of the token with the specified `mask_token_id`, or
     `None` if not present in the `inputs`.
     """
-    # TODO: Implement this function
-    raise NotImplementedError
 
+    input_ids = list(inputs['input_ids'].numpy()[0])
+    try:
+        index = input_ids.index(mask_token_id)
+    except ValueError:
+        return None
+    
+    return index
 
 
 def get_color_for_attention_score(attention_score):
@@ -55,9 +60,8 @@ def get_color_for_attention_score(attention_score):
     Return a tuple of three integers representing a shade of gray for the
     given `attention_score`. Each value should be in the range [0, 255].
     """
-    # TODO: Implement this function
-    raise NotImplementedError
-
+    rgb = (255 * attention_score.numpy())//1
+    return (int(rgb), int(rgb), int(rgb))
 
 
 def visualize_attentions(tokens, attentions):
@@ -70,13 +74,15 @@ def visualize_attentions(tokens, attentions):
     include both the layer number (starting count from 1) and head number
     (starting count from 1).
     """
-    # TODO: Update this function to produce diagrams for all layers and heads.
-    generate_diagram(
-        1,
-        1,
-        tokens,
-        attentions[0][0][0]
-    )
+
+    for i in range(len(attentions)):
+        for k in range(len(attentions[i][0])):
+            generate_diagram(
+                i+1,
+                k+1,
+                tokens,
+                attentions[i][0][k]
+            )
 
 
 def generate_diagram(layer_number, head_number, tokens, attention_weights):
@@ -126,7 +132,7 @@ def generate_diagram(layer_number, head_number, tokens, attention_weights):
             draw.rectangle((x, y, x + GRID_SIZE, y + GRID_SIZE), fill=color)
 
     # Save image
-    img.save(f"Attention_Layer{layer_number}_Head{head_number}.png")
+    img.save(f"attentions/Attention_Layer{layer_number}_Head{head_number}.png")
 
 
 if __name__ == "__main__":
