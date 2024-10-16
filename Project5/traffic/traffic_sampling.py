@@ -134,28 +134,16 @@ def get_model(hidden_nodes=1,filters=1, filter_size= (2,2), pooling_size=(2,2),p
 
     model = tf.keras.models.Sequential(
         [
-        # TODO - get a better grip on how to form these layers
-        # and argument in the README.md
            tf.keras.layers.Conv2D(
-               # 32 is the number of filters in the convolutional layer  
-               # (3,3) means that each filter will have a 3 x 3 kernel
                filters, filter_size, activation = 'relu', input_shape = (IMG_WIDTH, IMG_HEIGHT, 3)
-               ), 
-           
-           # pooling layer reduces 2 x 2 regions to single max value
-           pooling_layer,
-           
-           tf.keras.layers.Flatten(),
-           
-           # hidden layer with 128 nodes
+               ),            
+           pooling_layer,           
+           tf.keras.layers.Flatten(),           
            tf.keras.layers.Dense(hidden_nodes,activation = 'relu'),
-           # 50% dropout
-           tf.keras.layers.Dropout(dropout),
-           
+           tf.keras.layers.Dropout(dropout),           
            tf.keras.layers.Dense(NUM_CATEGORIES, activation='softmax')
         ]        
     )
-
     
     model.compile(optimizer='adam',loss = 'categorical_crossentropy', metrics = ['accuracy'] )
     
