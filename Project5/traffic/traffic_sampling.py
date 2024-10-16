@@ -2,10 +2,11 @@ import cv2
 import numpy as np
 import os
 import pandas as pd
+import random
 import sys
 import tensorflow as tf
 
-import random
+
 from tensorflow.python.keras.utils.layer_utils import count_params
 from sklearn.model_selection import train_test_split
 
@@ -15,7 +16,7 @@ IMG_HEIGHT = 30
 NUM_CATEGORIES = 43
 TEST_SIZE = 0.4
 
-HIDDEN_NODES_RANGE = (14, 129)
+HIDDEN_NODES_RANGE = (14, 260)
 NUM_OF_FILTERS_RANGE = (1, 100)
 SIZE_OF_FILTERS = [(2,2), (3,3), (4,4), (5,5)]
 SIZE_OF_POOLING = [(2,2), (3,3), (4,4), (5,5)]
@@ -40,7 +41,7 @@ def main():
         np.array(images), np.array(labels), test_size=TEST_SIZE
     )
 
-    df = pd.DataFrame(columns = ['accuracy', 'loss', 'acc_convergence','loss_convergence','acc_valid','loss_valid', 'parameters','hidden_nodes', 'filters', 'filter_size', 'pooling_size', 'pooling_type', 'dropout', ])
+    df = pd.DataFrame(columns = ['accuracy', 'loss', 'acc_convergence','acc_valid','loss_valid', 'parameters','hidden_nodes', 'filters', 'filter_size', 'pooling_size', 'pooling_type', 'dropout'])
 
     df.to_csv(OUTPUT_FILE, index = False)
 
@@ -57,30 +58,23 @@ def main():
 
         trainable_count = count_params(model.trainable_weights)
 
-
         # Fit model on training data
         history = model.fit(x_train, y_train, epochs=EPOCHS, verbose = None)
 
         # Evaluate neural network performance
         output = model.evaluate(x_test,  y_test, verbose = None)
 
-        acc_convergence_epochs = loss_convergence_epochs = 0
+        acc_convergence_epochs = 0
 
         for i in range(EPOCHS):
             if output[1] - history.history['accuracy'][i] < 0.01:
                 acc_convergence_epochs = i+1
                 break
 
-        for i in range(EPOCHS):
-            if output[0] - history.history['loss'][i] < 0.01:
-                loss_convergence_epochs = i+1
-                break
-
         acc_valid = output[1] > history.history['accuracy'][EPOCHS-1]
-        loss_valid = output[1] > history.history['loss'][EPOCHS-1]
+        loss_valid = output[0] < history.history['loss'][EPOCHS-1]
 
-
-        row = [round(output[1],4), round(output[0],4), acc_convergence_epochs, loss_convergence_epochs, acc_valid, loss_valid, trainable_count, hidden_nodes, filters, filter_size,pooling_size, pooling_type, dropout]
+        row = [round(output[1],4), round(output[0],4), acc_convergence_epochs, acc_valid, loss_valid, trainable_count, hidden_nodes, filters, filter_size,pooling_size, pooling_type, dropout]
         df.loc[-1] = row
         df.to_csv(OUTPUT_FILE, index = False, header = False, mode = 'a')
         df.drop(df.tail(1).index,inplace=True)
