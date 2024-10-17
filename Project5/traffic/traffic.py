@@ -35,7 +35,7 @@ def main():
     model.fit(x_train, y_train, epochs=EPOCHS)
 
     # Evaluate neural network performance
-    model.evaluate(x_test,  y_test, verbose=2)
+    model.evaluate(x_test, y_test, verbose=2)
 
     # Save model to file
     if len(sys.argv) == 3:
@@ -63,7 +63,7 @@ def load_data(data_dir):
 
     for subdir, dirs, files in os.walk(data_dir):
         for file in files:
-            
+
             # convert to class 'numpy.ndarray'
             image = cv2.imread(f'{subdir}{os.sep}{file}')
             # normalise colorspace
@@ -72,10 +72,11 @@ def load_data(data_dir):
             # normalise size
             image = cv2.resize(image, dsize=(IMG_WIDTH, IMG_HEIGHT))
             images.append(image)
-            
+
             labels.append(subdir.split(os.sep)[-1])
 
     return (images, labels)
+
 
 def get_model():
     """
@@ -87,28 +88,28 @@ def get_model():
         [
             # input layer
             tf.keras.layers.Conv2D(
-               # Number of filters = 91
-               # kernel size on filters =  5 x 5
-               91, (5,5), activation = 'relu', input_shape = (IMG_WIDTH, IMG_HEIGHT, 3)
-               ), 
-           
+                # Number of filters = 91
+                # kernel size on filters =  5 x 5
+                91,
+                (5, 5),
+                activation='relu',
+                input_shape=(IMG_WIDTH, IMG_HEIGHT, 3),
+            ),
             # pooling layer reduces 4 x 4 regions to single max value
-            tf.keras.layers.MaxPooling2D(pool_size=(4,4)),
-           
+            tf.keras.layers.MaxPooling2D(pool_size=(4, 4)),
             tf.keras.layers.Flatten(),
-           
             # hidden layer with 194 hidden nodes
-            tf.keras.layers.Dense(194,activation = 'relu'),
-           
+            tf.keras.layers.Dense(194, activation='relu'),
             # 35% dropout
             tf.keras.layers.Dropout(0.35),
-           
-            tf.keras.layers.Dense(NUM_CATEGORIES, activation='softmax')
-        ]        
+            tf.keras.layers.Dense(NUM_CATEGORIES, activation='softmax'),
+        ]
     )
-    
-    model.compile(optimizer='adam',loss = 'categorical_crossentropy', metrics = ['accuracy'] )
-    
+
+    model.compile(
+        optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy']
+    )
+
     return model
 
 
