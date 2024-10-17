@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 EPOCHS = 10
 IMG_WIDTH = 30
 IMG_HEIGHT = 30
-NUM_CATEGORIES = 3
+NUM_CATEGORIES = 43
 TEST_SIZE = 0.4
 
 
@@ -85,20 +85,25 @@ def get_model():
     """
     model = tf.keras.models.Sequential(
         [
-        # TODO - get a better grip on how to form these layers
-        # and argument in the README.md
-           tf.keras.layers.Conv2D(
-               32, (3,3), activation = 'relu', input_shape = (IMG_WIDTH, IMG_HEIGHT, 3)
+            # input layer
+            tf.keras.layers.Conv2D(
+               # Number of filters = 91
+               # kernel size on filters =  5 x 5
+               91, (5,5), activation = 'relu', input_shape = (IMG_WIDTH, IMG_HEIGHT, 3)
                ), 
            
-           tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
+            # pooling layer reduces 4 x 4 regions to single max value
+            tf.keras.layers.MaxPooling2D(pool_size=(4,4)),
            
-           tf.keras.layers.Flatten(),
+            tf.keras.layers.Flatten(),
            
-           tf.keras.layers.Dense(128,activation = 'relu'),
-           tf.keras.layers.Dropout(0.5),
+            # hidden layer with 194 hidden nodes
+            tf.keras.layers.Dense(194,activation = 'relu'),
            
-           tf.keras.layers.Dense(NUM_CATEGORIES, activation='softmax')
+            # 35% dropout
+            tf.keras.layers.Dropout(0.35),
+           
+            tf.keras.layers.Dense(NUM_CATEGORIES, activation='softmax')
         ]        
     )
     
