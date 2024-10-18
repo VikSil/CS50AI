@@ -23,12 +23,15 @@ The tokens seem to pay attention to one other token that it can form a unit with
 
 Example Sentences:
 - We hold these truths to be self evident that all [MASK] are created equal.
+
 ![Attention Layer 5, Head 8, Example 1](https://raw.githubusercontent.com/VikSil/CS50AI/refs/heads/trunk/Project6/attention/analysis_images/Attention_Layer5_Head8_01.png)
 
 - Did he pick a [MASK] stone up from the table?
+
 ![Attention Layer 5, Head 8, Example 2](https://raw.githubusercontent.com/VikSil/CS50AI/refs/heads/trunk/Project6/attention/analysis_images/Attention_Layer5_Head8_02.png)
 
 - If I do not make it, someone else [MASK] stand my ground.
+
 ![Attention Layer 5, Head 8, Example 3](https://raw.githubusercontent.com/VikSil/CS50AI/refs/heads/trunk/Project6/attention/analysis_images/Attention_Layer5_Head8_03.png)
 
 

@@ -121,7 +121,8 @@ After the pruning the lower bound of valuation accuracy in the sample had change
 
 Each epoch of training should increase the accuracy of the NN, i.e. the accuracy of the second epoch should be higher than first, accuracy of the third epoch highter than second, and so on. A well performing NN should be equally performant on a validation set as it is on a training set. Thus, it stands to reason that after ten epochs the 11th epoch should have even higher accuracy than the 10th epoch. Likewise, loss should decrease with each epoch and, ideally, should be less for the validation set than the 10th epoch of the training set.
 
-Analysis revealed that indeed majority of the runs remaining in the sample had higher validation accuracy and lower validation loss than the 10th epoch of the training set. 
+Analysis revealed that indeed majority of the runs remaining in the sample had higher validation accuracy and lower validation loss than the 10th epoch of the training set.
+
 ![Percentage of Increased Valuation Accuracy](https://raw.githubusercontent.com/VikSil/CS50AI/refs/heads/trunk/Project5/traffic/img/08.png)
 
 ![Percentage of Decreased Valuation Loss](https://raw.githubusercontent.com/VikSil/CS50AI/refs/heads/trunk/Project5/traffic/img/09.png)
