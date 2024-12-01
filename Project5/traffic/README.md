@@ -104,6 +104,7 @@ This means that less accurate runs could be removed from the sample set without 
 ### Number of Epochs till Convergence
 
 The analysis showed that majority of remaining runs were never within 1% of the validation accuracy over the 10 training epochs (zero epochs to convergence). 
+
 ![Frequency of Epochs till Convergence](https://raw.githubusercontent.com/VikSil/CS50AI/refs/heads/trunk/Project5/traffic/img/05.png)
 
 Convergence had no clear correlation with either validation accuracy or validation loss, however runs with higer accuracy and lower loss tended to not converge more frequently.
